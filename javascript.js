@@ -41,14 +41,20 @@ function hitClear(){
 
 function hitNum(){
   var num = Number(this.innerText);
-  if(calData.length === 0 && num === 0){
-    display.innerText = num;
-  }else if(calData.length < calData.MAXLENGTH){
-    if(calData.length !== 0) display.innerText = display.innerText+num;
-    else display.innerText = num;
-    calData.length++;
+  if(display.innerText[display.innerText.length-2]=="*"||display.innerText[display.innerText.length-2]=="/"){
+    display.innerText = "-"+num;
+    calData.length=2;
+    console.log(showProcess()+display.innerText);
+  }else{
+    if(calData.length === 0 && num === 0){
+      display.innerText = num;
+    }else if(calData.length < calData.MAXLENGTH){
+      if(calData.length !== 0) display.innerText = display.innerText+num;
+      else display.innerText = num;
+      calData.length++;
+    }
+    console.log(showProcess()+display.innerText);
   }
-  console.log(showProcess()+display.innerText);
 }
 
 function hitDot(){
@@ -103,42 +109,67 @@ function calculateData(){
 
 function hitOperator(){
   var operator=this.innerText[0];
-  if(display.innerText){
+    switch (display.innerText[display.innerText.length-1]){
+      case "+":
+        if(display.innerText&&display.innerText!=0){
+          calData.operators[calData.count-1]=operator;
+          display.innerText=calculateData()+operator;
+          console.log(showProcess());
+        }
+        break;
+      case "-":
+        if(display.innerText&&display.innerText!=0&&calData.count>0){
+            calData.operators[calData.count-1]=operator;
+            display.innerText=calculateData()+operator;
+            console.log(showProcess());
+
+        } else if(operator==="+"){
+          display.innerText="0";
+        }
+        break;
+      case "*":
+      case "/":
+        if(display.innerText&&display.innerText!=0){
+          if(operator=="-"){
+            display.innerText=display.innerText+"-";
+          } else{
+            calData.operators[calData.count-1]=operator;
+            display.innerText=calculateData()+operator;
+            console.log(showProcess());
+          }
+        }
+        break;
+      default:
+        if(display.innerText&&display.innerText!=0){
+          calData.operators[calData.count]=operator;
+          addData();
+          display.innerText=calculateData()+calData.operators[calData.count-1];
+        } else if(operator==="-"){
+          display.innerText="-";
+          calData.length++;
+          console.log("-");
+        }
+    }
+}
+
+function hitEqual(){
+  if(calData.count===0&&display.innerText=="-"){
+    display.innerText=0;
+  } else {
     switch (display.innerText[display.innerText.length-1]){
       case "+":
       case "-":
       case "*":
       case "/":
-        calData.operators[calData.count-1]=operator;
-        display.innerText=calculateData()+operator;
-        console.log(showProcess());
+        display.innerText=calData.numbers[calData.count-1];
         break;
       default:
-        calData.operators[calData.count]=operator;
+        calData.operators[calData.count]="";
         addData();
-        display.innerText=calculateData()+calData.operators[calData.count-1];
     }
-  } else if(operator==="-"){
-    display.innerText="-";
-    calData.length++;
-    console.log("-");
+    display.innerText=calculateData();
+    calData.reset();
   }
-}
-
-function hitEqual(){
-  switch (display.innerText[display.innerText.length-1]){
-    case "+":
-    case "-":
-    case "*":
-    case "/":
-      display.innerText=calData.numbers[calData.count-1];
-      break;
-    default:
-      calData.operators[calData.count]="";
-      addData();
-  }
-  display.innerText=calculateData();
-  calData.reset();
 }
 
 function add(x,y){
