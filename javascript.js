@@ -49,7 +49,8 @@ function hitNum(){
     if(calData.length === 0 && num === 0){
       display.innerText = num;
     }else if(calData.length < calData.MAXLENGTH){
-      if(calData.length !== 0) display.innerText = display.innerText+num;
+      if(calData.length !== 0 && display.innerText=="-") display.innerText = display.innerText+num;
+      else if(calData.length !== 0 && display.innerText!="-") display.innerText = Number(display.innerText+num);
       else display.innerText = num;
       calData.length++;
     }
@@ -100,6 +101,7 @@ function calculateData(){
     var wholeNum = result.split(".");
     if(Math.abs(result) > Math.pow(10,calData.MAXLENGTH-(result>0?0:1))-1){
       result = "too long";
+      calData.reset();
     } else {
       result = Number(Number(result).toFixed(calData.MAXLENGTH-1-wholeNum[0].length));
     }
@@ -140,7 +142,7 @@ function hitOperator(){
         }
         break;
       default:
-        if(display.innerText&&display.innerText!=0){
+        if(display.innerText&&calData.length!=0){
           calData.operators[calData.count]=operator;
           addData();
           display.innerText=calculateData()+calData.operators[calData.count-1];
