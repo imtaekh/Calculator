@@ -70,10 +70,14 @@ function hitDot(){
 }
 
 function addData(){
-  calData.numbers[calData.count]=Number(display.innerText);
-  calData.count++;
-  calData.length=0;
-  console.log(showProcess());
+  if(display.innerText!='too long'){
+    calData.numbers[calData.count]=Number(display.innerText);
+    calData.count++;
+    calData.length=0;
+    console.log(showProcess());
+  } else {
+    hitClear();
+  }
 }
 function calculateData(){
   var result=calData.numbers[0];
@@ -113,14 +117,14 @@ function hitOperator(){
   var operator=this.innerText[0];
     switch (display.innerText[display.innerText.length-1]){
       case "+":
-        if(display.innerText&&display.innerText!=0){
+        if(display.innerText&&display.innerText!='0'){
           calData.operators[calData.count-1]=operator;
           display.innerText=calculateData()+operator;
           console.log(showProcess());
         }
         break;
       case "-":
-        if(display.innerText&&display.innerText!=0&&calData.count>0){
+        if(display.innerText&&display.innerText!='0'&&calData.count>0){
             calData.operators[calData.count-1]=operator;
             display.innerText=calculateData()+operator;
             console.log(showProcess());
@@ -131,7 +135,7 @@ function hitOperator(){
         break;
       case "*":
       case "/":
-        if(display.innerText&&display.innerText!=0){
+        if(display.innerText&&display.innerText!='0'){
           if(operator=="-"){
             display.innerText=display.innerText+"-";
           } else{
@@ -142,7 +146,7 @@ function hitOperator(){
         }
         break;
       default:
-        if(display.innerText&&calData.length!=0){
+        if(display.innerText&&display.innerText!='0'&&display.innerText!='too long'){
           calData.operators[calData.count]=operator;
           addData();
           display.innerText=calculateData()+calData.operators[calData.count-1];
