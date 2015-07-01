@@ -96,9 +96,9 @@ function calculateData(){
 
   //trim into less than 10 digits
   result= result.toString();
-  if(result.length>10){
+  if(result.length>calData.MAXLENGTH){
     var wholeNum = result.split(".");
-    if(result>Math.pow(10,calData.MAXLENGTH)){
+    if(Math.abs(result) > Math.pow(10,calData.MAXLENGTH-(result>0?0:1))-1){
       result = "too long";
     } else {
       result = Number(Number(result).toFixed(calData.MAXLENGTH-1-wholeNum[0].length));
