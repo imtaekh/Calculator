@@ -36,16 +36,19 @@ var calData={
 function hitClear(){
   calData.reset();
   display.innerText= "0";
+  console.log(showProcess()+display.innerText);
 }
 
 function hitNum(){
   var num = Number(this.innerText);
   if(calData.length === 0 && num === 0){
+    display.innerText = num;
   }else if(calData.length < calData.MAXLENGTH){
     if(calData.length !== 0) display.innerText = display.innerText+num;
     else display.innerText = num;
     calData.length++;
   }
+  console.log(showProcess()+display.innerText);
 }
 
 function hitDot(){
@@ -56,30 +59,16 @@ function hitDot(){
     display.innerText = display.innerText+".";
     calData.length++;
   }
+  console.log(showProcess()+display.innerText);
 }
 
 function addData(){
   calData.numbers[calData.count]=Number(display.innerText);
   calData.count++;
   calData.length=0;
-
-  var soFar="";
-  for(var i=0;i<calData.count;i++){
-    soFar=soFar+calData.numbers[i]+calData.operators[i];
-  }
-  console.log(soFar);
+  console.log(showProcess());
 }
-
-function hitOperator(){
-  if(display.innerText){
-    calData.operators[calData.count]=this.innerText[0];
-    addData();
-  }
-}
-
-function hitEqual(){
-  calData.operators[calData.count]="";
-  addData();
+function calculateData(){
   var result=calData.numbers[0];
   for(var i=1;i<calData.count;i++){
     switch(calData.operators[i-1]){
@@ -109,9 +98,46 @@ function hitEqual(){
       result = Number(Number(result).toFixed(calData.MAXLENGTH-1-wholeNum[0].length));
     }
   }
+  return result;
+}
 
-  //display the result
-  display.innerText=result;
+function hitOperator(){
+  var operator=this.innerText[0];
+  if(display.innerText){
+    switch (display.innerText[display.innerText.length-1]){
+      case "+":
+      case "-":
+      case "*":
+      case "/":
+        calData.operators[calData.count-1]=operator;
+        display.innerText=calculateData()+operator;
+        console.log(showProcess());
+        break;
+      default:
+        calData.operators[calData.count]=operator;
+        addData();
+        display.innerText=calculateData()+calData.operators[calData.count-1];
+    }
+  } else if(operator==="-"){
+    display.innerText="-";
+    calData.length++;
+    console.log("-");
+  }
+}
+
+function hitEqual(){
+  switch (display.innerText[display.innerText.length-1]){
+    case "+":
+    case "-":
+    case "*":
+    case "/":
+      display.innerText=calData.numbers[calData.count-1];
+      break;
+    default:
+      calData.operators[calData.count]="";
+      addData();
+  }
+  display.innerText=calculateData();
   calData.reset();
 }
 
@@ -126,4 +152,12 @@ function multiply(x,y){
 }
 function divide(x,y){
   return (Number(x)/Number(y));
+}
+
+function showProcess(){
+  var soFar="";
+  for(var i=0;i<calData.count;i++){
+    soFar=soFar+calData.numbers[i]+calData.operators[i];
+  }
+  return soFar;
 }
